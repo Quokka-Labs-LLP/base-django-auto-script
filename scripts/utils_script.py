@@ -41,7 +41,7 @@ from .helper import Helper
 
 
 class Logger:
-    base_path = f'{settings.BASE_DIR}/logs/{{time:D-MMM-YYYY}}'
+    base_path = f'{settings.BASE_DIR}/logs/{{time:YYYY}}/{{time:MMMM}}/{{time:DD}}'
 
     logger.add(
         f'{base_path}/request.log', format="{message}", rotation="1 days", level="INFO",
