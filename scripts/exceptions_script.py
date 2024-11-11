@@ -21,7 +21,7 @@ from rest_framework.exceptions import (
 )
 
 from .exception import ApiException
-from utils import Responder, Constant, Logger
+from utils import Responder, Logger
 
 
 def handle_errors(exception, context):
@@ -41,7 +41,7 @@ def handle_errors(exception, context):
     if callable(response_code):
         response_code = response_code(exception)
 
-    if isinstance(response_code, list) and (
+    if isinstance(response_code, dict) and (
         response_code["response_code"] == 507 or response_code["response_code"] == 508
     ):
         return Responder.send(response_code["response_code"], data=response_code["data"], status=False)
@@ -57,13 +57,20 @@ def handle_api_exception(exception):
     return exception.error_code
 
 
+def unpacking_error(error_details):
+    data = {}
+    for key, val in error_details.items():
+        if isinstance(val, dict):
+            data[key] = unpacking_error(val)
+        if isinstance(val, list):
+            data[key] = str(val[0])
+    return data
+
+
 def handle_validation_error(exception):
     error_details = exception.detail
     response_code = 507
-    data = {}
-    for key, val in error_details.items():
-        data[key] = str(val[0])
-        response_code = Constant.djangoDefaultCodes.get(val[0].code, 507)
+    data = unpacking_error(error_details)
     return {
                 "response_code": response_code,
                 "data": data
