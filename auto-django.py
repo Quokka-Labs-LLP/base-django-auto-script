@@ -27,14 +27,14 @@ def settingup_django(project_name, base_dir_name, database, celery, redis):
     create_exceptions(exception_path, exception_handler_path)
 
     if celery.lower() == 'y':
-        celery_path = os.path.join(base_path, f'{project_name}/celery.py')
+        celery_path = os.path.join(base_path, f'{base_dir_name}/celery.py')
         create_celery(celery_path, project_name)
 
     utils_path = os.path.join(base_path, "utils")
     os.makedirs(utils_path)
     create_utils(utils_path, project_name)
 
-    logger_path = os.path.join(base_path, f"{project_name}/middlewares")
+    logger_path = os.path.join(base_path, f"{base_dir_name}/middlewares")
     os.makedirs(logger_path)
     create_logger_middleware(os.path.join(logger_path, "LoggerMiddleware.py"))
 
