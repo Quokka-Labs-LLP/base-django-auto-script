@@ -23,11 +23,11 @@ class Responder:
         )
 
     @staticmethod
-    def sendText(code):
+    def send_text(code):
         return HttpResponse(Constant.response_messages[code])
 
     @staticmethod
-    def raiseError(code):
+    def raise_error(code):
         raise ApiException(code)
 """
     responder_content = responder_content.replace("django_base_architecture", project_name)
@@ -83,13 +83,11 @@ class Logger:
             cls.error_log.info(data.replace('  ', ''))
 
     @classmethod
-    def custom(cls, request, output):
+    def custom(cls, output):
         current_time = localtime(timezone=timezone(
             "Asia/Kolkata")).strftime("%I:%M:%S %p (%Z)")
         data = f"""
-            {current_time} | IP [{request.META.get('REMOTE_ADDR')}]
-            {request.build_absolute_uri()} ({request.method})
-            HEADERS {request.headers}\\n
+            {current_time}
             ************************************************************************************************************
             {output}
             \\n************************************************************************************************************\\n
