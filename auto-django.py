@@ -9,6 +9,8 @@ from scripts.settings_script import create_settings
 from scripts.logger_middleware_script import create_logger_middleware
 from scripts.project_init_script import create_project_init
 from scripts.create_env_script import create_env
+from scripts.filter_script import create_filter
+from scripts.pagination_script import create_pagination
 
 
 def settingup_django(project_name, base_dir_name, database, celery, redis):
@@ -26,13 +28,18 @@ def settingup_django(project_name, base_dir_name, database, celery, redis):
     exception_handler_path = os.path.join(base_path, f"{base_dir_name}/exception_handler.py")
     create_exceptions(exception_path, exception_handler_path)
 
+    filter_path = os.path.join(base_path, f'{base_dir_name}/filters.py')
+    create_filter(filter_path)
+    pagination_path = os.path.join(base_path, f'{base_dir_name}/pagination.py')
+    create_pagination(pagination_path)
+
     if celery.lower() == 'y':
         celery_path = os.path.join(base_path, f'{base_dir_name}/celery.py')
-        create_celery(celery_path, project_name)
+        create_celery(celery_path, base_dir_name)
 
     utils_path = os.path.join(base_path, "utils")
     os.makedirs(utils_path)
-    create_utils(utils_path, project_name)
+    create_utils(utils_path, base_dir_name)
 
     logger_path = os.path.join(base_path, f"{base_dir_name}/middlewares")
     os.makedirs(logger_path)
@@ -74,7 +81,7 @@ def install_package_in_venv(database, celery="", redis=""):
     if redis.lower() == 'y':
         redis_package = 'redis django-redis'
 
-    install_cmd = f'pip install django djangorestframework {database_package} {celery_package} {redis_package} django-environ loguru django-cors-headers flake8 pytz'
+    install_cmd = f'pip install django djangorestframework {database_package} {celery_package} {redis_package} django-environ loguru django-cors-headers flake8 pytz django-filter'
     cmd = f'/bin/bash -c "source {activate_cmd} && {install_cmd}"' if sys.platform != 'win32' else f'{activate_cmd} && {install_cmd}'
     #os.chmod(activate_script, 0o755)
     # Run the activation command and then install the package
@@ -115,7 +122,7 @@ if __name__ == "__main__":
                 break
     if python_path == "":
         python_path = 'python3'
-        if sys.platform == 'win32': 
+        if sys.platform == 'win32':
             python_path = 'python'
     database = ""
     while isinstance(database, str):
@@ -137,7 +144,7 @@ if __name__ == "__main__":
     while True:
         project_name = input("Enter Django project name: ")
         if not project_name.isidentifier():
-            print("""\nProject name must start with a letter or an underscore. Following characters can be letters, digits, or underscores. It cannot start with a digit. Also, empty string is not allowed.""")    
+            print("""\nProject name must start with a letter or an underscore. Following characters can be letters, digits, or underscores. It cannot start with a digit. Also, empty string is not allowed.""")
         else:
             break
     celery = input("Do you want celery, 'Y' for yes: ")
