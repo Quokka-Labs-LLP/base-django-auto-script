@@ -155,4 +155,4 @@ if __name__ == "__main__":
     create_django_project(project_name, base_dir_name)
     create_requirements_file(project_name)
     settingup_django(project_name, base_dir_name, database, celery, redis)
-    # cleanup()
+    cleanup()
